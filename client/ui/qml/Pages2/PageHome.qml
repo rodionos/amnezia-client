@@ -36,6 +36,32 @@ PageType {
         ConnectButton {
             anchors.centerIn: parent
         }
+
+        ColumnLayout {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 34
+
+            BasicButtonType {
+                property bool isLoggingEnabled: SettingsController.isLoggingEnabled
+
+                implicitHeight: 36
+
+                defaultColor: "transparent"
+                hoveredColor: Qt.rgba(1, 1, 1, 0.08)
+                pressedColor: Qt.rgba(1, 1, 1, 0.12)
+                disabledColor: "#878B91"
+                textColor: "#878B91"
+                borderWidth: 0
+
+                visible: isLoggingEnabled ? true : false
+                text: qsTr("Logging enabled")
+
+                onClicked: {
+                    PageController.goToPage(PageEnum.PageSettingsLogging)
+                }
+            }
+        }
     }
 
 

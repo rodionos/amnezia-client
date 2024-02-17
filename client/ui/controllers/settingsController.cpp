@@ -1,6 +1,7 @@
 #include "settingsController.h"
 
 #include <QStandardPaths>
+#include <QtConcurrent>
 
 #include "logger.h"
 #include "systemController.h"
@@ -43,6 +44,8 @@ SettingsController::SettingsController(const QSharedPointer<ServersModel> &serve
         });
     }
 #endif
+
+    startLoggingWather();
 }
 
 void SettingsController::toggleAmneziaDns(bool enable)
@@ -87,8 +90,11 @@ void SettingsController::toggleLogging(bool enable)
 {
     m_settings->setSaveLogs(enable);
 #ifdef Q_OS_IOS
-  AmneziaVPN::toggleLogging(enable);
+    AmneziaVPN::toggleLogging(enable);
 #endif
+    if (enable == true) {
+        startLoggingWather();
+    }
     emit loggingStateChanged();
 }
 
@@ -223,4 +229,21 @@ bool SettingsController::isCameraPresent()
 #else
     return false;
 #endif
+}
+
+void SettingsController::startLoggingWather()
+{
+    if (isLoggingEnabled()) {
+        m_loggingDisableDate = m_settings->getLogEnableDate().addDays(14);
+        QFuture<void> future = QtConcurrent::run([this]() {
+            while (m_loggingDisableDate > QDateTime::currentDateTime()) {
+                QThread::currentThread()->msleep(1000 * 60);
+            }
+
+            toggleLogging(false);
+            clearLogs();
+            emit loggingDisableByWathcer();
+            return;
+        });
+    }
 }
