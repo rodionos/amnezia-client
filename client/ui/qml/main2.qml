@@ -179,9 +179,13 @@ Window  {
                     clickedFunc: function() {
                         hidePassword = !hidePassword
                     }
+
+                    KeyNavigation.tab: saveButton
                 }
 
                 BasicButtonType {
+                    id: saveButton
+
                     Layout.fillWidth: true
 
                     defaultColor: "transparent"
@@ -193,7 +197,7 @@ Window  {
 
                     text: qsTr("Save")
 
-                    onClicked: {
+                    clickedFunc: function() {
                         privateKeyPassphraseDrawer.close()
                         PageController.passphraseRequestDrawerClosed(passphrase.textFieldText)
                     }
